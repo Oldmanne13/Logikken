@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interaktiv læringsapp om logiske gates med klassisk diagram, Minecraft-inspireret redstone-visning og en læringsassistent." />
+  <title>LogikLab – lær logiske gates</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div>
+        <p class="eyebrow">Digital logik</p>
+        <h1>LogikLab</h1>
+        <p class="subtitle">Undersøg kredsløbet, lav en forudsigelse og få hjælp uden at få facit serveret.</p>
+      </div>
+      <div class="header-badge" aria-label="Kredsløbets funktion">
+        <span>OUT =</span>
+        <strong>(A AND C) AND NOT(B OR D)</strong>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap layout">
+    <section class="card controls-card" aria-labelledby="inputs-title">
+      <div class="section-heading">
+        <div>
+          <p class="step-label">Trin 1</p>
+          <h2 id="inputs-title">Vælg inputs</h2>
+        </div>
+        <button class="ghost-button" id="randomizeBtn" type="button">Tilfældige inputs</button>
+      </div>
+
+      <div class="input-grid" role="group" aria-label="Inputværdier">
+        <button class="input-toggle" data-input="A" aria-pressed="false">
+          <span class="input-name">A</span>
+          <span class="input-value">0</span>
+        </button>
+        <button class="input-toggle" data-input="C" aria-pressed="false">
+          <span class="input-name">C</span>
+          <span class="input-value">0</span>
+        </button>
+        <button class="input-toggle" data-input="B" aria-pressed="false">
+          <span class="input-name">B</span>
+          <span class="input-value">0</span>
+        </button>
+        <button class="input-toggle" data-input="D" aria-pressed="false">
+          <span class="input-name">D</span>
+          <span class="input-value">0</span>
+        </button>
+      </div>
+
+      <div class="prediction-panel">
+        <div>
+          <p class="step-label">Trin 2</p>
+          <h3>Hvad tror du OUT bliver?</h3>
+          <p>Vælg 0 eller 1, før du kontrollerer kredsløbet.</p>
+        </div>
+        <div class="prediction-actions" role="group" aria-label="Forudsig OUT">
+          <button class="prediction-button" data-prediction="0" type="button">0</button>
+          <button class="prediction-button" data-prediction="1" type="button">1</button>
+          <button id="checkBtn" class="primary-button" type="button" disabled>Kontrollér</button>
+        </div>
+        <p id="predictionFeedback" class="feedback" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="card visual-card" aria-labelledby="visual-title">
+      <div class="section-heading visual-heading">
+        <div>
+          <p class="step-label">Trin 3</p>
+          <h2 id="visual-title">Følg signalet</h2>
+        </div>
+        <div class="view-tabs" role="tablist" aria-label="Visualisering">
+          <button class="view-tab active" data-view="diagram" role="tab" aria-selected="true">Diagram</button>
+          <button class="view-tab" data-view="minecraft" role="tab" aria-selected="false">Redstone</button>
+        </div>
+      </div>
+
+      <div id="diagramView" class="view-panel active" role="tabpanel">
+        <svg class="logic-svg" viewBox="0 0 920 410" role="img" aria-label="Logisk kredsløb med A og C gennem AND, B og D gennem OR og NOT, og derefter en sidste AND-gate">
+          <defs>
+            <filter id="signalGlow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <g class="input-label-group">
+            <rect x="18" y="54" width="72" height="42" rx="8" class="terminal"/><text x="54" y="82">A</text>
+            <rect x="18" y="136" width="72" height="42" rx="8" class="terminal"/><text x="54" y="164">C</text>
+            <rect x="18" y="252" width="72" height="42" rx="8" class="terminal"/><text x="54" y="280">B</text>
+            <rect x="18" y="334" width="72" height="42" rx="8" class="terminal"/><text x="54" y="362">D</text>
+          </g>
+
+          <path id="wireA" class="wire" d="M90 75 H205" />
+          <path id="wireC" class="wire" d="M90 157 H205" />
+          <path id="wireB" class="wire" d="M90 273 H185" />
+          <path id="wireD" class="wire" d="M90 355 H185" />
+
+          <g class="gate">
+            <path d="M205 42 H268 C336 42 336 190 268 190 H205 Z" />
+            <text x="256" y="123">AND</text>
+          </g>
+
+          <g class="gate or-gate">
+            <path d="M183 235 Q225 314 183 393 Q276 393 332 314 Q276 235 183 235 Z" />
+            <path d="M168 235 Q210 314 168 393" class="or-back" />
+            <text x="246" y="321">OR</text>
+          </g>
+
+          <path id="wireAnd1" class="wire" d="M336 116 H515 V156 H592" />
+          <path id="wireOr" class="wire" d="M332 314 H405" />
+
+          <g class="gate not-gate">
+            <path d="M405 274 L405 354 L478 314 Z" />
+            <circle cx="491" cy="314" r="12" />
+            <text x="426" y="322">NOT</text>
+          </g>
+
+          <path id="wireNot" class="wire" d="M503 314 H515 V250 H592" />
+
+          <g class="gate final-gate">
+            <path d="M592 127 H650 C720 127 720 279 650 279 H592 Z" />
+            <text x="642" y="210">AND</text>
+          </g>
+
+          <path id="wireOut" class="wire" d="M720 203 H812" />
+          <rect x="812" y="181" width="92" height="44" rx="8" class="terminal output-terminal"/>
+          <text id="outText" x="858" y="210" class="output-text">OUT ?</text>
+
+          <g id="nodeLabels" class="node-labels" aria-hidden="true">
+            <text id="labelAnd1" x="368" y="102">?</text>
+            <text id="labelOr" x="355" y="300">?</text>
+            <text id="labelNot" x="520" y="302">?</text>
+          </g>
+        </svg>
+        <p class="view-note">Aktive signaler markeres tydeligt efter kontrol. Indtil da kan du selv prøve at følge kredsløbet fra venstre mod højre.</p>
+      </div>
+
+      <div id="minecraftView" class="view-panel" role="tabpanel" hidden>
+        <div class="redstone-stage" aria-label="Minecraft-inspireret redstone-model af samme logik">
+          <div class="redstone-note">Pædagogisk redstone-model – ikke en blok-for-blok byggeopskrift.</div>
+
+          <div class="rs-grid">
+            <div class="rs-input" style="grid-area:a">A <span data-rs-value="A">0</span></div>
+            <div class="rs-input" style="grid-area:c">C <span data-rs-value="C">0</span></div>
+            <div class="rs-input" style="grid-area:b">B <span data-rs-value="B">0</span></div>
+            <div class="rs-input" style="grid-area:d">D <span data-rs-value="D">0</span></div>
+
+            <div class="dust path-a" data-rs-path="A" style="grid-area:pa">redstone</div>
+            <div class="dust path-c" data-rs-path="C" style="grid-area:pc">redstone</div>
+            <div class="dust path-b" data-rs-path="B" style="grid-area:pb">redstone</div>
+            <div class="dust path-d" data-rs-path="D" style="grid-area:pd">redstone</div>
+
+            <div class="rs-module" style="grid-area:and1">
+              <span class="module-title">AND</span>
+              <span class="module-detail">blokke + torches</span>
+              <span class="module-value" data-rs-value="and1">?</span>
+            </div>
+
+            <div class="rs-module" style="grid-area:or1">
+              <span class="module-title">OR</span>
+              <span class="module-detail">sammenkoblet signal</span>
+              <span class="module-value" data-rs-value="or1">?</span>
+            </div>
+
+            <div class="rs-module torch-module" style="grid-area:not1">
+              <span class="torch" aria-hidden="true"></span>
+              <span class="module-title">NOT</span>
+              <span class="module-detail">redstone torch</span>
+              <span class="module-value" data-rs-value="not1">?</span>
+            </div>
+
+            <div class="dust" data-rs-path="and1" style="grid-area:pand">redstone</div>
+            <div class="dust" data-rs-path="or1" style="grid-area:por">redstone</div>
+            <div class="dust" data-rs-path="not1" style="grid-area:pnot">redstone</div>
+
+            <div class="rs-module" style="grid-area:and2">
+              <span class="module-title">AND</span>
+              <span class="module-detail">slutbetingelse</span>
+              <span class="module-value" data-rs-value="output">?</span>
+            </div>
+
+            <div class="dust" data-rs-path="output" style="grid-area:pout">redstone</div>
+            <div class="rs-lamp" style="grid-area:lamp">
+              <span class="lamp-face"></span>
+              <strong>OUT</strong>
+              <span data-rs-value="output">?</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="analysisStrip" class="analysis-strip locked" aria-live="polite">
+        <div><span>AND(A,C)</span><strong id="and1Value">?</strong></div>
+        <div><span>OR(B,D)</span><strong id="orValue">?</strong></div>
+        <div><span>NOT(...)</span><strong id="notValue">?</strong></div>
+        <div><span>OUT</span><strong id="outValue">?</strong></div>
+      </div>
+    </section>
+
+    <aside class="card tutor-card" aria-labelledby="tutor-title">
+      <div class="tutor-title-row">
+        <div class="tutor-icon" aria-hidden="true">?</div>
+        <div>
+          <p class="step-label">Læringsassistent</p>
+          <h2 id="tutor-title">Få hjælp til næste tanke</h2>
+        </div>
+      </div>
+      <p class="tutor-intro">Assistenten giver spørgsmål og gradvise hints. Den er lavet til at hjælpe dig med at tænke videre – ikke til at give hele løsningen.</p>
+
+      <div class="tutor-actions">
+        <button class="tutor-button" data-tutor="start">Hjælp mig i gang</button>
+        <button class="tutor-button" data-tutor="hint">Giv mig et hint</button>
+        <button class="tutor-button" data-tutor="question">Stil mig et spørgsmål</button>
+        <button class="tutor-button" data-tutor="ai">Hvordan kunne jeg spørge en AI?</button>
+      </div>
+
+      <div id="tutorMessage" class="tutor-message" aria-live="polite">
+        Vælg dine inputs og prøv først selv at følge signalet gennem kredsløbet.
+      </div>
+
+      <div id="microQuestion" class="micro-question" hidden>
+        <p id="microQuestionText"></p>
+        <div id="microAnswers" class="micro-answers"></div>
+        <p id="microFeedback" class="micro-feedback" aria-live="polite"></p>
+      </div>
+
+      <details class="ai-principle">
+        <summary>Hvorfor kalder vi det en læringsassistent?</summary>
+        <p>Denne version bruger foruddefinerede regler og spørgsmål. Den efterligner en god måde at bruge en AI-chat på: bed om forklaringer, næste skridt og modspørgsmål i stedet for bare at bede om facit.</p>
+      </details>
+    </aside>
+
+    <section class="card table-card">
+      <details>
+        <summary><span>Undersøg sandhedstabellen</span><small>16 mulige kombinationer</small></summary>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>A</th><th>C</th><th>B</th><th>D</th><th>OUT</th></tr></thead>
+            <tbody id="truthBody"></tbody>
+          </table>
+        </div>
+        <p class="table-note">Den aktuelle kombination markeres. Brug tabellen efter dine egne forsøg – ikke som første skridt.</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">LogikLab · statisk HTML/CSS/JavaScript · egnet til GitHub Pages</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

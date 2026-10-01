@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="LogikLab – enkel undervisning i AND, OR, NOT og XOR med øvelser, et fast kredsløb og en læringsassistent." />
+  <title>LogikLab – lær logiske gates</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div>
+        <p class="eyebrow">Digital logik · 8. klasse</p>
+        <h1>LogikLab</h1>
+        <p class="subtitle">Lær én gate ad gangen, øv dig, og brug dem til sidst i et rigtigt kredsløb.</p>
+      </div>
+      <div class="header-tip" aria-label="Læringsprincip">
+        <span>💡</span>
+        <p><strong>Prøv først.</strong><br />Få derefter et hint – ikke facit.</p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="course-nav" aria-label="Forløb">
+    <div class="wrap nav-row">
+      <button class="nav-button active" data-section="learn"><span>1</span>Lær</button>
+      <button class="nav-button" data-section="practice"><span>2</span>Øv</button>
+      <button class="nav-button" data-section="challenge"><span>3</span>Udfordring</button>
+      <button class="nav-button" data-section="extra"><span>4</span>Ekstra</button>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <!-- LÆR -->
+    <section id="learn" class="course-section active" aria-labelledby="learn-title">
+      <div class="section-intro">
+        <p class="step-label">Del 1</p>
+        <h2 id="learn-title">Lær én gate ad gangen</h2>
+        <p>Vælg en gate, skift input og se præcis, hvornår output bliver 0 eller 1.</p>
+      </div>
+
+      <div class="gate-picker" role="tablist" aria-label="Vælg logisk gate">
+        <button class="gate-choice active" data-gate="AND" role="tab" aria-selected="true">AND</button>
+        <button class="gate-choice" data-gate="OR" role="tab" aria-selected="false">OR</button>
+        <button class="gate-choice" data-gate="NOT" role="tab" aria-selected="false">NOT</button>
+        <button class="gate-choice" data-gate="XOR" role="tab" aria-selected="false">XOR</button>
+      </div>
+
+      <div class="two-column learning-grid">
+        <article class="card gate-lab-card">
+          <div class="card-heading">
+            <div>
+              <p class="step-label">Eksperimentér</p>
+              <h3 id="learnGateTitle">AND-gate</h3>
+            </div>
+            <span id="learnGateRule" class="rule-chip">Begge skal være 1</span>
+          </div>
+
+          <div class="learn-simulator">
+            <div class="input-stack" id="learnInputs" aria-label="Gate inputs">
+              <button class="signal-button" data-learn-input="A" aria-pressed="false"><span>A</span><strong>0</strong></button>
+              <button class="signal-button" data-learn-input="B" aria-pressed="false"><span>B</span><strong>0</strong></button>
+            </div>
+
+            <div id="learnGateDiagram" class="gate-diagram" aria-live="polite"></div>
+
+            <div class="output-box" id="learnOutputBox">
+              <span>OUT</span>
+              <strong id="learnOutput">0</strong>
+            </div>
+          </div>
+
+          <p id="learnExplanation" class="short-explanation"></p>
+        </article>
+
+        <article class="card truth-card">
+          <div class="card-heading">
+            <div>
+              <p class="step-label">Se mønstret</p>
+              <h3>Sandhedstabel</h3>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="truth-table" aria-label="Sandhedstabel for valgt gate">
+              <thead id="learnTruthHead"></thead>
+              <tbody id="learnTruthBody"></tbody>
+            </table>
+          </div>
+          <p class="small-note">Den grønne række viser de inputs, du har valgt lige nu.</p>
+        </article>
+      </div>
+
+      <aside class="assistant-card" aria-labelledby="learn-assistant-title">
+        <div class="assistant-head">
+          <div class="assistant-icon">?</div>
+          <div>
+            <p class="step-label">Læringsassistent</p>
+            <h3 id="learn-assistant-title">Få hjælp uden at få svaret</h3>
+          </div>
+        </div>
+        <p id="learnAssistantText" class="assistant-message">Prøv først at ændre inputtene. Hvis noget er uklart, kan jeg forklare reglen eller stille dig et spørgsmål.</p>
+        <div class="assistant-actions">
+          <button class="assistant-button" data-learn-help="hint">Giv mig et hint</button>
+          <button class="assistant-button" data-learn-help="rule">Forklar reglen</button>
+          <button class="assistant-button" data-learn-help="question">Stil mig et spørgsmål</button>
+          <button class="assistant-button subtle" data-learn-help="ai">Hvordan kunne jeg spørge en AI?</button>
+        </div>
+        <div id="learnMicroQuestion" class="micro-question" hidden></div>
+      </aside>
+    </section>
+
+    <!-- ØV -->
+    <section id="practice" class="course-section" aria-labelledby="practice-title" hidden>
+      <div class="section-intro">
+        <p class="step-label">Del 2</p>
+        <h2 id="practice-title">Øv én gate ad gangen</h2>
+        <p>Du får et mål. Indstil inputtene, så gaten opfører sig som ønsket.</p>
+      </div>
+
+      <div class="two-column practice-grid">
+        <article class="card practice-card">
+          <div class="challenge-label">Opgave</div>
+          <h3 id="practicePrompt">Kan du få AND-gaten til at give output 1?</h3>
+          <p id="practiceRuleHint" class="muted">Prøv uden hjælp først.</p>
+
+          <div class="practice-workbench">
+            <div id="practiceInputs" class="input-row"></div>
+            <div id="practiceGateDiagram" class="gate-diagram compact"></div>
+            <div id="practiceOutputBox" class="output-box muted-output">
+              <span>OUT</span><strong>?</strong>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button id="practiceCheck" class="primary-button">Kontrollér</button>
+            <button id="practiceNew" class="ghost-button">Ny opgave</button>
+          </div>
+          <p id="practiceFeedback" class="feedback" aria-live="polite"></p>
+        </article>
+
+        <aside class="assistant-card embedded" aria-labelledby="practice-assistant-title">
+          <div class="assistant-head">
+            <div class="assistant-icon">?</div>
+            <div>
+              <p class="step-label">Læringsassistent</p>
+              <h3 id="practice-assistant-title">Sidder du fast?</h3>
+            </div>
+          </div>
+          <p id="practiceAssistantText" class="assistant-message">Prøv én kombination først. Et forkert forsøg er også information.</p>
+          <div class="assistant-actions stacked-mobile">
+            <button class="assistant-button" data-practice-help="hint">Et lille hint</button>
+            <button class="assistant-button" data-practice-help="question">Stil mig et spørgsmål</button>
+            <button class="assistant-button subtle" data-practice-help="ai">Bedre AI-spørgsmål</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- UDFORDRING -->
+    <section id="challenge" class="course-section" aria-labelledby="challenge-title" hidden>
+      <div class="section-intro">
+        <p class="step-label">Del 3</p>
+        <h2 id="challenge-title">Sæt gates sammen</h2>
+        <p>Nu bruger vi det kredsløb, du skal kunne analysere. Tag det i små bidder fra venstre mod højre.</p>
+      </div>
+
+      <article class="card circuit-card">
+        <div class="circuit-toolbar">
+          <div>
+            <p class="step-label">Det faste kredsløb</p>
+            <h3>AND → OR → NOT → AND</h3>
+          </div>
+          <button id="challengeRandom" class="ghost-button">Nye inputs</button>
+        </div>
+
+        <div class="challenge-inputs" aria-label="Kredsløbets inputs">
+          <button class="signal-button" data-challenge-input="A"><span>A</span><strong>0</strong></button>
+          <button class="signal-button" data-challenge-input="B"><span>B</span><strong>0</strong></button>
+          <button class="signal-button" data-challenge-input="C"><span>C</span><strong>0</strong></button>
+          <button class="signal-button" data-challenge-input="D"><span>D</span><strong>0</strong></button>
+        </div>
+
+        <div class="circuit-scroll">
+          <svg id="challengeCircuit" class="logic-circuit" viewBox="0 0 980 430" role="img" aria-label="A og C går til AND. B og D går til OR og derefter NOT. De to grene mødes i en sidste AND-gate.">
+            <g class="circuit-labels">
+              <text x="25" y="70">A</text>
+              <text x="25" y="155">C</text>
+              <text x="25" y="280">B</text>
+              <text x="25" y="365">D</text>
+            </g>
+
+            <path id="cWireA" class="c-wire" d="M55 65 H210" />
+            <path id="cWireC" class="c-wire" d="M55 150 H210" />
+            <path id="cWireB" class="c-wire" d="M55 275 H190" />
+            <path id="cWireD" class="c-wire" d="M55 360 H190" />
+
+            <g id="cGateAnd1" class="c-gate">
+              <path d="M210 35 H275 C345 35 345 180 275 180 H210 Z" />
+              <text x="265" y="115">AND</text>
+            </g>
+
+            <g id="cGateOr" class="c-gate">
+              <path d="M190 235 Q230 317.5 190 400 Q287 400 345 317.5 Q287 235 190 235 Z" />
+              <text x="260" y="325">OR</text>
+            </g>
+
+            <path id="cWireAnd1" class="c-wire" d="M345 107.5 H565 V155 H650" />
+            <path id="cWireOr" class="c-wire" d="M345 317.5 H420" />
+
+            <g id="cGateNot" class="c-gate">
+              <path d="M420 278 L420 357 L495 317.5 Z" />
+              <circle cx="509" cy="317.5" r="12" />
+              <text x="438" y="325">NOT</text>
+            </g>
+
+            <path id="cWireNot" class="c-wire" d="M521 317.5 H565 V245 H650" />
+
+            <g id="cGateFinal" class="c-gate">
+              <path d="M650 125 H715 C785 125 785 275 715 275 H650 Z" />
+              <text x="705" y="207">AND</text>
+            </g>
+
+            <path id="cWireOut" class="c-wire" d="M785 200 H875" />
+            <rect id="cOutBox" x="875" y="175" width="90" height="50" rx="10" class="c-output" />
+            <text id="cOutText" x="920" y="208" class="c-output-text">?</text>
+
+            <g class="value-badges">
+              <g id="badgeAnd1" transform="translate(375 88)"><rect width="48" height="38" rx="9"/><text x="24" y="26">?</text></g>
+              <g id="badgeOr" transform="translate(360 290)"><rect width="48" height="38" rx="9"/><text x="24" y="26">?</text></g>
+              <g id="badgeNot" transform="translate(535 290)"><rect width="48" height="38" rx="9"/><text x="24" y="26">?</text></g>
+            </g>
+          </svg>
+        </div>
+        <p class="small-note">Klik på A, B, C og D for at eksperimentere. Når du ændrer et input, starter analysen forfra.</p>
+      </article>
+
+      <div class="two-column challenge-bottom">
+        <article class="card step-card">
+          <div class="card-heading">
+            <div>
+              <p class="step-label">Analysér trin for trin</p>
+              <h3 id="challengeStepTitle">Trin 1 af 4</h3>
+            </div>
+          </div>
+          <p id="challengeStepPrompt" class="step-prompt">Se på A og C. Hvad kommer ud af den første AND-gate?</p>
+          <div class="binary-answer-row">
+            <button class="binary-answer" data-challenge-answer="0">0</button>
+            <button class="binary-answer" data-challenge-answer="1">1</button>
+          </div>
+          <p id="challengeStepFeedback" class="feedback" aria-live="polite"></p>
+          <button id="challengeReset" class="ghost-button small" type="button">Start analysen forfra</button>
+        </article>
+
+        <aside class="assistant-card embedded" aria-labelledby="challenge-assistant-title">
+          <div class="assistant-head">
+            <div class="assistant-icon">?</div>
+            <div>
+              <p class="step-label">Læringsassistent</p>
+              <h3 id="challenge-assistant-title">Hjælp til næste trin</h3>
+            </div>
+          </div>
+          <p id="challengeAssistantText" class="assistant-message">Arbejd kun med den gate, der er fremhævet. Du behøver ikke regne hele kredsløbet på én gang.</p>
+          <div class="assistant-actions stacked-mobile">
+            <button class="assistant-button" data-challenge-help="hint">Giv mig et hint</button>
+            <button class="assistant-button" data-challenge-help="question">Stil mig et spørgsmål</button>
+            <button class="assistant-button subtle" data-challenge-help="ai">Hvordan spørger jeg en AI?</button>
+          </div>
+        </aside>
+      </div>
+
+      <details class="card compact-details">
+        <summary>Vis hele sandhedstabellen for kredsløbet</summary>
+        <p class="small-note">Der er 16 mulige kombinationer af fire inputs. Tabellen er ekstra materiale – du behøver ikke lære den udenad.</p>
+        <div class="table-wrap">
+          <table class="truth-table full-circuit-table">
+            <thead><tr><th>A</th><th>B</th><th>C</th><th>D</th><th>OUT</th></tr></thead>
+            <tbody id="circuitTruthBody"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <!-- EKSTRA -->
+    <section id="extra" class="course-section" aria-labelledby="extra-title" hidden>
+      <div class="section-intro">
+        <p class="step-label">Del 4 · Valgfrit</p>
+        <h2 id="extra-title">Hvor møder man logikken?</h2>
+        <p>Minecraft/redstone kan bruges som en analogi. Du behøver ikke kende Minecraft for at forstå gates.</p>
+      </div>
+
+      <div class="two-column extra-grid">
+        <article class="card minecraft-card">
+          <div class="card-heading">
+            <div>
+              <p class="step-label">Minecraft-idé</p>
+              <h3>To håndtag og en lampe</h3>
+            </div>
+            <span class="rule-chip">AND</span>
+          </div>
+
+          <p>Forestil dig, at lampen kun skal lyse, når <strong>begge</strong> håndtag er tændt. Det er samme regel som en AND-gate.</p>
+
+          <div class="minecraft-demo" aria-label="Forenklet redstone-analogi">
+            <button class="mc-lever" data-mc-input="A" aria-pressed="false"><span class="lever-stick"></span><strong>A: 0</strong></button>
+            <div class="mc-dust" data-mc-wire="A"></div>
+            <div class="mc-build"><span>redstone-<br />kredsløb</span></div>
+            <div class="mc-dust output" data-mc-wire="OUT"></div>
+            <div class="mc-lamp"><span></span><strong>Lampe</strong></div>
+            <button class="mc-lever second" data-mc-input="B" aria-pressed="false"><span class="lever-stick"></span><strong>B: 0</strong></button>
+            <div class="mc-dust second" data-mc-wire="B"></div>
+          </div>
+          <p id="mcExplanation" class="short-explanation">Begge håndtag er 0, så lampen er slukket.</p>
+          <p class="small-note">Dette er en pædagogisk illustration, ikke en blok-for-blok byggevejledning til Minecraft.</p>
+        </article>
+
+        <article class="card ai-learning-card">
+          <div class="card-heading">
+            <div>
+              <p class="step-label">AI som læringsværktøj</p>
+              <h3>Spørg efter hjælp – ikke bare svar</h3>
+            </div>
+          </div>
+          <div class="prompt-compare">
+            <div class="prompt bad">
+              <span>Mindre hjælpsomt</span>
+              <p>“Hvad er svaret?”</p>
+            </div>
+            <div class="prompt good">
+              <span>Mere hjælpsomt</span>
+              <p>“Stil mig ét spørgsmål ad gangen, så jeg selv kan finde svaret.”</p>
+            </div>
+            <div class="prompt good">
+              <span>Mere hjælpsomt</span>
+              <p>“Forklar XOR-reglen og giv mig derefter en lille opgave.”</p>
+            </div>
+            <div class="prompt good">
+              <span>Mere hjælpsomt</span>
+              <p>“Giv mig et hint til næste trin uden at afsløre OUT.”</p>
+            </div>
+          </div>
+          <p class="small-note"><strong>Om læringsassistenten:</strong> Denne version bruger faste regler og spørgsmål. Den demonstrerer en god læringsdialog, men er ikke en generativ AI-chatbot.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <strong>LogikLab</strong>
+      <span>Interaktiv introduktion til digital logik</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
